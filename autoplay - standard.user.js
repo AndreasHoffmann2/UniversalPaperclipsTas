@@ -2423,12 +2423,11 @@
 			//Aber: mit < 1:20 knapp 1h laufen gelassen -> kein einziger Erfolg
 			//Daher ab jetzt: < 1:25
 			autoReset("Did not reach improved wire extrusion quickly enough -> reset");
-		} else if (coalesce(engineState.goalsReached.goalTakeover, now) > 28 * 60 * 1000) {
+		} else if (coalesce(engineState.goalsReached.goalTakeover, now) > 27 * 60 * 1000) {
 			autoReset("Did not reach hostileTakeover quickly enough -> reset");
-		} else if (coalesce(engineState.goalsReached.goalMonopoly, now) > 34 * 60 * 1000) {
-            //Mit 31 * 60 * 1000 wurde diese Hürde auch nach 3-4 Tagen Dauerspielen nicht genommen
+		} else if (coalesce(engineState.goalsReached.goalMonopoly, now) > 32 * 60 * 1000) {
 			autoReset("Did not reach fullMonopoly quickly enough -> reset");
-		} else if (coalesce(engineState.goalsReached.goalHypnodrones, now) > 44 * 60 * 1000) {
+		} else if (coalesce(engineState.goalsReached.goalHypnodrones, now) > 41 * 60 * 1000) {
 			autoReset("Did not release the hypnoDrones quickly enough -> reset");
 		} else if (engineState.goalsReached.goalHypnodrones == null && getTotalClips() > 125000000) {
 			autoReset("Reached 125,000,000 clips without releasing the hypno-drones -> reset");
@@ -2476,7 +2475,7 @@
 			var investmentCash = getInvestmentCash();
 			var investmentLevel = getInvestmentLevel();
 			var marketingLevel = getMarketingLevel();
-			log("Human era. Funds: " + formatNumber(funds / 100, 2) + ", trust: " + formatNumber(trust, 0) + ", processors: " + formatNumber(processors, 0) + ", memory: " + formatNumber(memory, 0) + ", totalClips: " + formatNumber(getTotalClips(), 0) + ", ops: " + formatNumber(ops, 0) + ", yomi: " + formatNumber(yomi, 0) + ", autoClippers: " + formatNumber(autoClippers, 0) + ", megaClippers: " + formatNumber(megaClippers, 0) + ", marketingLevel: " + formatNumber(marketingLevel, 0) + ", investmentLevel: " + formatNumber(investmentLevel, 0) + ", investmentCash: " + formatNumber(investmentCash / 100, 0) + ", investmentTotal: " + formatNumber(investmentTotal / 100, 0));
+			log("Human era. Funds: " + formatNumber(funds / 100, 2) + ", trust: " + formatNumber(trust, 0) + ", processors: " + formatNumber(processors, 0) + ", memory: " + formatNumber(memory, 0) + ", ops: " + formatNumber(ops, 0) + ", yomi: " + formatNumber(yomi, 0) + ", autoClippers: " + formatNumber(autoClippers, 0) + ", megaClippers: " + formatNumber(megaClippers, 0) + ", marketingLevel: " + formatNumber(marketingLevel, 0) + ", investmentLevel: " + formatNumber(investmentLevel, 0) + ", investmentCash: " + formatNumber(investmentCash / 100, 0) + ", investmentTotal: " + formatNumber(investmentTotal / 100, 0));
 		} else if (!projectActivated(projects.spaceExploration)) {
 			log("Drone era. Factories: " + formatNumber(getClipFactoryCount()) + ", harvesterDrones: " + formatNumber(getHarvesterDroneCount()) + ", wireDrones: " + formatNumber(getWireDroneCount()) + ", solarFarms: " + formatNumber(getSolarFarmCount()) + ", batteryTowers: " + formatNumber(getBatteryTowerCount()) + ", processors: " + formatNumber(getProcessors()) + ", memory: " + formatNumber(getMemory()) + ", creativity: " + formatNumber(getCreativity()) + ", ops: " + formatNumber(getOperations()));
 		} else {
@@ -3026,8 +3025,8 @@
 
 	var defaultTimeout = 30000;
 	showMessages([
-		{ text: "<p>Welcome to my TAS.</p><p>You are watching a tool-assisted-speedrun: all actions are executed automatically. A human would be able to play this in theory - if he could act fast enough.</p>", timeout: defaultTimeout },
-		{ text: "<p>This is in no way meant to show playing skill.</p><p>It's all about trying to find the fastest automated way of beating the game with &quot;normal&quot; gameplay.</p>", timeout: defaultTimeout },
+		{ text: "<p>Welcome to my TAS.</p><p>You are watching a Tool-assisted-speedrun: all actions are executed automatically. A human would be able to play this in theory - if he could act fast enough.</p>", timeout: defaultTimeout },
+		{ text: "<p>This is in no way meant to show playing skill.</p><p>It's all about trying to find the fastest automated way of beating the game.</p>", timeout: defaultTimeout },
 		{ text: "<p>The first goal is to establish a continuing flow of clips. For this, &quot;Improved Wire Extrusion&quot; is required.</p><p>Let's wait for that to happen.</p>" },
 	]);
 	var messagesUntilQuantum = [
@@ -3058,7 +3057,7 @@
 		{ text: "<p>The next big goal is one sextillion clips. When reaching this, all facilities will be disassembled to get the project.</p>" },
 	];
 	var messagesAfter1Sext = [
-		{ text: "<p>That was the last important project on earth. We will harvest 5 oct now and use the time to get some swarm-gifts.</p><p>The exact amount of drones is important. If we only had a single drone less, the gift would be smaller. For a bigger gift, about 5.6 million drones would be needed. That is not worth the wait.</p>" },
+		{ text: "<p>That was the last important project on earth. We will harvest 5 oct now and use the time to get some swarm-gifts.</p><p>If we only had a single drone less, the gift would be smaller. For a bigger gift, about 5.6 million drones would be needed. That is not worth the wait.</p>" },
 	];
 	var messageAfterSpace = [
 		{ text: "<p>Finally reached the space-era. The first step is simple: launch probes as quickly as possible.</p>", timeout: defaultTimeout },
@@ -3069,7 +3068,6 @@
 		{ text: "<p>The TAS has been implemented using a Greasemonkey-script that runs in chrome.</p>", timeout: defaultTimeout },
 		{ text: "<p>All it does, is read the values from the site and click the buttons. Just like a player would do. No cheats are involved.</p>", timeout: defaultTimeout },
 		{ text: "<p>It uses about 20 different strategies for the different goals and triggers a total 95 projects.</p>", timeout: defaultTimeout },
-		{ text: "<p>You do just have to believe me that there is no cheating involved. Why should I do that? It's all about the curiosity, how fast the game can be beaten. And this video will probably not get too many clicks anyway :-)</p>", timeout: defaultTimeout },
 		{ text: "<p>Now we just have to wait for 154 nonillion drones.</p>" },
 	];
 
