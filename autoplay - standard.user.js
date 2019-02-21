@@ -2524,20 +2524,18 @@
 	}
 
 	function createProject(btnId, description, cost, pre) {
+		var keys = ['ops', 'yomi', 'creat', 'clips', 'funds', 'mwSeconds', 'trust'];
 		for (var key in cost) {
 			if (cost.hasOwnProperty(key)) {
-				if (key != "ops" && key != "yomi" && key != "creat" && key != "clips" && key != "funds" && key != "mwSeconds" && key != "trust") {
+				if (keys.indexOf(key) == -1) {
 					throw new Error("Unknown key: " + key);
 				}
 			}
 		}
-		lazyFill(cost, "ops");
-		lazyFill(cost, "yomi");
-		lazyFill(cost, "creat");
-		lazyFill(cost, "clips");
-		lazyFill(cost, "funds");
-		lazyFill(cost, "mwSeconds");
-		lazyFill(cost, "trust");
+
+		keys.forEach(function(key) {
+			lazyFill(cost, key);
+		});
 
 		return { btnId: btnId, description: description, cost: cost, pre: pre };
 		function lazyFill(obj, key) {
@@ -2917,10 +2915,66 @@
 		goal1sexdecillion: null,
 	};
 
+	function timeToTicks(time) {
+		return time.split(':').reduce(function(acc, value) {
+				return acc*60 + parseInt(value, 10);
+		}, 0)*1000;
+	}
+
+	engineState.goalsExpected = {
+		goalIWE: timeToTicks('00:01:24'),
+		goalQuantum: timeToTicks('00:09:54'),
+		goalChip1: timeToTicks('00:12:45'),
+		goalTakeover: timeToTicks('00:27:22'),
+		goalMonopoly: timeToTicks('00:32:27'),
+		goalHypnodrones: timeToTicks('00:41:59'),
+		goalMomentum: timeToTicks('00:45:11'),
+		goalSextillion: timeToTicks('00:52:30'),
+		goalSpace: timeToTicks('00:58:30'),
+		goalDone: timeToTicks('1:26:11'),
+		goal500: timeToTicks('00:00:02'),
+		goal1k: timeToTicks('00:00:04'),
+		goal10k: timeToTicks('00:01:11'),
+		goal100k: timeToTicks('00:07:27'),
+		goal1million: timeToTicks('00:16:27'),
+		goal1billion: timeToTicks('00:42:23'),
+		goal1trillion: timeToTicks('00:42:26'),
+		goal1quadrillion: timeToTicks('00:48:03'),
+		goal1quintillion: timeToTicks('00:51:07'),
+		goal1sextillion: timeToTicks('00:52:30'),
+		goal1septillion: timeToTicks('00:52:31'),
+		goal1octillion: timeToTicks('00:54:17'),
+		goal1nonillion: timeToTicks('01:09:02'),
+		goal1decillion: timeToTicks('01:12:48'),
+		goal1undecillion: timeToTicks('01:14:51'),
+		goal1duodecillion: timeToTicks('01:18:55'),
+		goal1tredecillion: timeToTicks('01:21:19'),
+		goal1quattuordecillion: timeToTicks('01:22:37'),
+		goal1quindecillion: timeToTicks('01:25:10'),
+		goal1sexdecillion: timeToTicks('01:26:00')
+	};
+
+	Object.keys(engineState.goalsExpected).forEach(function(key) {
+		displayGoal(key);
+	});
+
 	function setGoal(id) {
 		log("Reached goal: " + id);
-		$(id).innerText = toTimeString(ticks * 10).substr(0, 7);
 		engineState.goalsReached[id] = ticks * 10;
+
+		displayGoal(id);
+	}
+
+	function displayGoal(id) {
+		if (engineState.goalsExpected[id] && engineState.goalsReached[id]) {
+			var color = (engineState.goalsExpected[id] < engineState.goalsReached[id])?'green':'red';
+			$(id).innerHTML = toTimeString(engineState.goalsReached[id]).substr(0, 7)
+						+ " <div style='color: "+color+"'>" + ((engineState.goalsExpected[id] - engineState.goalsReached[id])/1000)  + "</div>";
+		} else if (engineState.goalsExpected[id]) {
+			$(id).innerHTML = "<div style='color: grey'>(" + toTimeString(engineState.goalsExpected[id]).substr(0, 7)  + ")</div>";
+		} else if (engineState.goalsReached[id]) {
+			$(id).innerHTML = toTimeString(engineState.goalsReached[id]).substr(0, 7);
+		}
 	}
 
 	function prepareContainers() {
@@ -2934,7 +2988,7 @@
 		//mainContainer.style.marginLeft = "10px";
 		mainContainer.style.backgroundColor = "white";
 		mainContainer.addEventListener("dblclick", function () { var cont = $("assistantsContainer"); cont.style.display = cont.style.display == "none" ? "" : "none"; });
-		mainContainer.innerHTML = '<h1>Goals (TAS)</h1><div style="float:left;margin-right: 20px;"><table><colgroup><col /><col style="align: right; width: 50px;" /></colgroup>' +
+		mainContainer.innerHTML = '<h1>Goals (TAS)</h1><div id="tick"></div><div style="float:left;margin-right: 20px;"><table><colgroup><col /><col style="align: right; width: 50px;" /></colgroup>' +
 			'<tr><td>Improved Wire Ext.:</td><td id="goalIWE"></td></tr>' +
 			'<tr><td>Quantum computing:</td><td id="goalQuantum"></td></tr>' +
 			'<tr><td>First photonic chip:</td><td id="goalChip1"></td></tr>' +
@@ -2970,6 +3024,7 @@
 			'</table></div>' +
 			'<div id="assistantsContainer" style="float:left;background-color: yellow; padding: 10px; display: none"></div>' +
 			'<div id="messages" style="padding-top: 20px; clear:both;width: 400px"></div>';
+
 		document.body.appendChild(mainContainer);
 	}
 
@@ -3441,7 +3496,10 @@
 	};
 
 	var timer = 0;
+	var tick = $('tick');
 	function strategyMain() {
+		tick.innerHTML = toTimeString(ticks * 10).substr(0,7);
+
 		for (var task in engineState.tasks) {
 			if (engineState.tasks.hasOwnProperty(task)) {
 				taskFunctions[task](task);
